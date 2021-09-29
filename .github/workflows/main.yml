@@ -37,5 +37,5 @@ jobs:
             image: luforresourcegroup.azurecr.io/mynodeapp:${{ github.sha }}
             registry-username: ${{ secrets.REGISTRY_USERNAME }}
             registry-password: ${{ secrets.REGISTRY_PASSWORD }}
-            name: myExpressContainer
+            name: myexpress-container
             location: 'East Asia'

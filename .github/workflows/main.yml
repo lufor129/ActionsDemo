@@ -1,3 +1,4 @@
+# .github/workflows/main.yml
 name: Express to Azure
 on: 
   push:
@@ -7,11 +8,34 @@ on:
     branches: ["master"]
 
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-    - run: |
-        az account show
+    build-and-deploy:
+        runs-on: ubuntu-latest
+        steps:
+        # checkout the repo
+        - name: 'Checkout GitHub Action'
+          uses: actions/checkout@master
+          
+        - name: 'Login via Azure CLI'
+          uses: azure/login@v1
+          with:
+            creds: ${{ secrets.AZURE_CREDENTIALS }}
+        
+        - uses: azure/docker-login@v1
+          with:
+            login-server: luforresourcegroup.azurecr.io
+            username: ${{ secrets.REGISTRY_USERNAME }}
+            password: ${{ secrets.REGISTRY_PASSWORD }}
+        - run: |
+            docker build . -t luforresourcegroup.azurecr.io/mynodeapp:${{ github.sha }}
+            docker push luforresourcegroup.azurecr.io/mynodeapp:${{ github.sha }}
+
+        - name: 'Deploy to Azure Container Instances'
+          uses: 'azure/aci-deploy@v1'
+          with:
+            resource-group: luforresourcegroup
+            dns-name-label: url-for-container
+            image: luforresourcegroup.azurecr.io/mynodeapp:${{ github.sha }}
+            registry-username: ${{ secrets.REGISTRY_USERNAME }}
+            registry-password: ${{ secrets.REGISTRY_PASSWORD }}
+            name: myExpressContainer
+            location: 'East Asia'

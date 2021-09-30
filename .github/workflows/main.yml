@@ -28,4 +28,13 @@ jobs:
         - run: |
             docker build . -t luforresourcegroup.azurecr.io/mynodeapp:${{ github.sha }}
             docker push luforresourcegroup.azurecr.io/mynodeapp:${{ github.sha }}
-          
+        - name: 'Deploy to Azure Container Instances'
+          uses: 'azure/aci-deploy@v1'
+          with:
+            resource-group: luforresourcegroup
+            dns-name-label: url-for-container
+            image: luforresourcegroup.azurecr.io/mynodeapp:${{ github.sha }}
+            registry-username: ${{ secrets.AZURE_USERNAME }}
+            registry-password: ${{ secrets.AZURE_PASSWORD }}
+            name: myexpress_container
+            location: 'East Asia'

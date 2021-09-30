@@ -34,7 +34,7 @@ jobs:
             resource-group: luforresourcegroup
             dns-name-label: url-for-container
             image: luforresourcegroup.azurecr.io/mynodeapp:${{ github.sha }}
-            registry-username: ${{ secrets.AZURE_USERNAME }}
-            registry-password: ${{ secrets.AZURE_PASSWORD }}
-            name: myexpress_container
+            registry-username: ${{ secrets.REGISTRY_USERNAME }}
+            registry-password: ${{ secrets.REGISTRY_PASSWORD }}
+            name: myExpressContainer
             location: 'East Asia'
